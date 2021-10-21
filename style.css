@@ -1,0 +1,21 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+
+  width: 70%;
+  margin: 50px auto;
+  border-radius: 5px;
+}
+.cell {
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 2px solid black;
+}
