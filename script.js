@@ -1,36 +1,78 @@
-let currentPlayer = `X`;
-let gameScore = [``, ``, ``, ``, ``, ``, ``, ``, ``];
-let isGame = true;
-const cells = document.querySelectorAll(`.cell`);
-cells.forEach((c) =>
-  c.addEventListener(`click`, (e) => {
-    e.target.textContent = currentPlayer;
-    e.target.disabled = true;
-
-    gameScore.shift();
-    gameScore.push(currentPlayer);
-    currentPlayer = currentPlayer == `X` ? `O` : `X`;
-    getWinner();
-  })
-);
-
-const cell1 = document.querySelector(`div[data-cell="1"]`);
-const cell2 = document.querySelector(`div[data-cell="2"]`);
-const cell3 = document.querySelector(`div[data-cell="3"]`);
-const cell4 = document.querySelector(`div[data-cell="4"]`);
-const cell5 = document.querySelector(`div[data-cell="5"]`);
-const cell6 = document.querySelector(`div[data-cell="6"]`);
-const cell7 = document.querySelector(`div[data-cell="7"]`);
-const cell8 = document.querySelector(`div[data-cell="8"]`);
-const cell9 = document.querySelector(`div[data-cell="9"]`);
-console.log(cell1.textContent);
-function getWinner() {
-  console.log(`called`, gameScore);
-  if (
-    cell1.textContent == `X` &&
-    cell5.textContent == `X` &&
-    cell9.textContent == `X`
-  ) {
-    console.log(`winner`);
+const cells = document.querySelectorAll(`[data-cell]`);
+const x_Class = `x`;
+const circle_Class = `circle`;
+const board = document.querySelector(`#board`);
+const messageContainer = document.getElementById(`winning-message`);
+const message = document.querySelector(`[data-winning-message-text]`);
+const restart = document.getElementById(`restartButton`);
+let currentCircle;
+startGame();
+console.log(cells[3]);
+function startGame() {
+  messageContainer.classList.remove(`show`);
+  cells.forEach((c) => {
+    c.classList.remove(x_Class);
+    c.classList.remove(circle_Class);
+    c.removeEventListener(`click`, handler);
+    c.addEventListener(`click`, handler, { once: true });
+  });
+  setBoardHover();
+}
+function handler(e) {
+  let currentClass = currentCircle ? circle_Class : x_Class;
+  e.target.classList.add(currentClass);
+  if (checkWinner(currentClass)) {
+    endGame(false);
+    console.log(1);
+  } else if (checkDraw()) {
+    console.log(2);
+    endGame(true);
+  } else {
+    switchPlayer();
+    setBoardHover();
   }
 }
+function checkWinner(currentClass) {
+  return winningss.some((combos) => {
+    return combos.every((index) => {
+      return cells[index].classList.contains(currentClass);
+    });
+  });
+}
+function checkDraw(currentClass) {
+  return [...cells].every(
+    (c) => c.classList.contains(x_Class) || c.classList.contains(circle_Class)
+  );
+}
+function endGame(draw) {
+  messageContainer.classList.add(`show`);
+  if (draw) {
+    message.textContent = `DRAW!`;
+  } else {
+    message.textContent = currentCircle ? `O's Won` : `X's Won`;
+  }
+}
+function switchPlayer() {
+  currentCircle = !currentCircle;
+  console.log(currentCircle);
+}
+function setBoardHover() {
+  board.classList.remove(x_Class);
+  board.classList.remove(circle_Class);
+  if (currentCircle) {
+    board.classList.add(circle_Class);
+  } else {
+    board.classList.add(x_Class);
+  }
+}
+const winningss = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
+restart.addEventListener(`click`, startGame);
